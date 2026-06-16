@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha Evolução · Estética & Treino</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style>
+  :root{ --bg:#0b0f1a; }
+  html, body{ overscroll-behavior-y: contain; }
+  body{ font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; transition:background .4s ease, color .4s ease; }
+  ::-webkit-scrollbar{ width:10px; height:10px; }
+  ::-webkit-scrollbar-track{ background:#0f1626; }
+  ::-webkit-scrollbar-thumb{ background:#27324a; border-radius:20px; }
+  ::-webkit-scrollbar-thumb:hover{ background:#3a4a6b; }
+  .glass{ background:rgba(20,27,45,.7); backdrop-filter:blur(14px); border:1px solid rgba(255,255,255,.07); }
+  .grad-text{ background:linear-gradient(90deg,#22d3ee,#a855f7,#f43f5e); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .glow{ box-shadow:0 0 0 1px rgba(168,85,247,.25), 0 18px 50px -18px rgba(168,85,247,.5); }
+  .fade-in{ animation:fade .5s ease both; }
+  @keyframes fade{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} }
+  .photo-slot{ aspect-ratio:3/4; }
+  input[type=file]{ display:none; }
+  .nav-active{ background:linear-gradient(90deg,rgba(34,211,238,.18),rgba(168,85,247,.18)); color:#fff; border-color:rgba(168,85,247,.4)!important; }
+  .check-done{ text-decoration:line-through; opacity:.5; }
+
+  /* ===== TEMA ESCURO (padrão) ===== */
+  body{ background:radial-gradient(1200px 600px at 80% -10%, rgba(168,85,247,.12), transparent), radial-gradient(900px 500px at 0% 10%, rgba(34,211,238,.10), transparent), #0b0f1a; }
+
+  /* ===== TEMA CLARO ===== */
+  html[data-theme="light"] body{ background:radial-gradient(1200px 600px at 80% -10%, rgba(168,85,247,.10), transparent), radial-gradient(900px 500px at 0% 10%, rgba(34,211,238,.12), transparent), #eef2f9; color:#1e293b; }
+  html[data-theme="light"] .glass{ background:rgba(255,255,255,.75); border:1px solid rgba(15,23,42,.08); box-shadow:0 8px 30px -12px rgba(15,23,42,.15); }
+  html[data-theme="light"] .glow{ box-shadow:0 0 0 1px rgba(168,85,247,.18), 0 18px 50px -18px rgba(168,85,247,.35); }
+  html[data-theme="light"] .nav-active{ color:#0f172a; }
+  /* textos - bem escuros para boa leitura no claro */
+  html[data-theme="light"] body{ color:#0f172a; }
+  html[data-theme="light"] .text-slate-200,
+  html[data-theme="light"] .text-slate-300{ color:#0f172a!important; }
+  html[data-theme="light"] .text-slate-400{ color:#334155!important; }
+  html[data-theme="light"] .text-slate-500{ color:#475569!important; }
+  html[data-theme="light"] .text-slate-600{ color:#475569!important; }
+  /* campos / caixas escuras -> claras */
+  html[data-theme="light"] .bg-\[\#0f1626\]{ background:#eef2fb!important; color:#0f172a!important; }
+  html[data-theme="light"] input, html[data-theme="light"] textarea, html[data-theme="light"] select{ color:#0f172a!important; }
+  html[data-theme="light"] input::placeholder, html[data-theme="light"] textarea::placeholder{ color:#64748b!important; }
+  /* títulos e textos genéricos dentro de cartões */
+  html[data-theme="light"] h1, html[data-theme="light"] h2, html[data-theme="light"] h3{ color:#0f172a; }
+  /* bordas claras */
+  html[data-theme="light"] .border-white\/10{ border-color:rgba(15,23,42,.12)!important; }
+  html[data-theme="light"] .border-white\/15{ border-color:rgba(15,23,42,.15)!important; }
+  html[data-theme="light"] .hover\:bg-white\/5:hover{ background:rgba(15,23,42,.05)!important; }
+  html[data-theme="light"] .bg-white\/5{ background:rgba(15,23,42,.05)!important; }
+  /* scrollbar clara */
+  html[data-theme="light"] ::-webkit-scrollbar-track{ background:#e2e8f0; }
+  html[data-theme="light"] ::-webkit-scrollbar-thumb{ background:#cbd5e1; }
+  html[data-theme="light"] ::-webkit-scrollbar-thumb:hover{ background:#94a3b8; }
+  /* modais / lightbox overlay mais suave no claro */
+  html[data-theme="light"] #modal{ background:rgba(100,116,139,.35)!important; }
+</style>
+</head>
+<body class="text-slate-200 min-h-screen">
+
+  <!-- ===== HEADER ===== -->
+  <header class="sticky top-0 z-40 glass">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl glow" style="background:linear-gradient(135deg,#22d3ee,#a855f7);">💪</div>
+        <div>
+          <h1 class="font-extrabold text-lg leading-none grad-text">Minha Evolução</h1>
+          <p class="text-[11px] text-slate-400 mt-0.5">Estética · Fotos · Dieta · Treino</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="themeBtn" onclick="toggleTheme()" title="Alternar tema" class="text-xs px-3 py-2 rounded-lg border border-white/10 hover:bg-white/5 transition flex items-center gap-1.5">🌙 <span class="hidden sm:inline">Escuro</span></button>
+        <button id="folderBtn" onclick="chooseFolder()" class="text-xs px-3 py-2 rounded-lg border border-white/10 hover:bg-white/5 transition flex items-center gap-1.5">📁 <span id="folderDot" class="w-2 h-2 rounded-full bg-slate-500"></span> <span id="folderLabel" class="hidden sm:inline">Escolher pasta</span></button>
+        <button onclick="saveToFolder()" class="text-xs px-3 py-2 rounded-lg border border-white/10 hover:bg-white/5 transition flex items-center gap-1.5">💾 <span class="hidden sm:inline">Salvar</span></button>
+      </div>
+    </div>
+    <nav class="max-w-6xl mx-auto px-4 pb-3 flex gap-2 overflow-x-auto">
+      <button data-tab="fotos" class="tab-btn nav-active whitespace-nowrap text-sm px-4 py-2 rounded-lg border border-white/10 transition">📸 Fotos & Evolução</button>
+      <button data-tab="comparar" class="tab-btn whitespace-nowrap text-sm px-4 py-2 rounded-lg border border-white/10 transition">⚖️ Comparar</button>
+      <button data-tab="plano" class="tab-btn whitespace-nowrap text-sm px-4 py-2 rounded-lg border border-white/10 transition">🍽️ Semana</button>
+      <button data-tab="checklist" class="tab-btn whitespace-nowrap text-sm px-4 py-2 rounded-lg border border-white/10 transition">✅ Checklist</button>
+    </nav>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6">
+
+    <!-- ============ FOTOS ============ -->
+    <section id="tab-fotos" class="tab-content fade-in">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5">
+        <div>
+          <h2 class="text-2xl font-bold">Registros de Fotos</h2>
+          <p class="text-slate-400 text-sm">O <b class="text-cyan-300">Dia 1</b> é o dia da primeira foto. A cada período que você definir, crie um novo registro e tire as 4 fotos.</p>
+        </div>
+        <button onclick="openNewSession()" class="self-start sm:self-auto px-4 py-2.5 rounded-xl font-semibold text-sm glow text-white transition hover:brightness-110" style="background:linear-gradient(135deg,#22d3ee,#a855f7);">+ Novo Registro</button>
+      </div>
+
+      <!-- stats -->
+      <div id="statsBar" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6"></div>
+
+      <div id="sessionsList" class="space-y-5"></div>
+      <div id="emptyState" class="hidden text-center py-20 glass rounded-2xl">
+        <div class="text-5xl mb-3">📷</div>
+        <p class="text-slate-300 font-semibold">Nenhum registro ainda</p>
+        <p class="text-slate-500 text-sm mt-1">Clique em "Novo Registro" para começar seu Dia 1!</p>
+      </div>
+    </section>
+
+    <!-- ============ COMPARAR ============ -->
+    <section id="tab-comparar" class="tab-content hidden fade-in">
+      <h2 class="text-2xl font-bold mb-1">Comparação Lado a Lado</h2>
+      <p class="text-slate-400 text-sm mb-5">Escolha dois registros e o ângulo para ver a diferença.</p>
+      <div class="glass rounded-2xl p-4 mb-5 grid sm:grid-cols-3 gap-3">
+        <div>
+          <label class="text-xs text-slate-400">Registro A (antes)</label>
+          <select id="cmpA" class="w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm"></select>
+        </div>
+        <div>
+          <label class="text-xs text-slate-400">Registro B (depois)</label>
+          <select id="cmpB" class="w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm"></select>
+        </div>
+        <div>
+          <label class="text-xs text-slate-400">Ângulo</label>
+          <select id="cmpAngle" class="w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm">
+            <option value="frente">Frente</option>
+            <option value="ladoDir">Lado Direito</option>
+            <option value="ladoEsq">Lado Esquerdo</option>
+            <option value="costas">Costas</option>
+          </select>
+        </div>
+      </div>
+      <div id="cmpResult" class="grid grid-cols-2 gap-3"></div>
+      <div id="cmpDiff" class="glass rounded-2xl p-4 mt-4 hidden"></div>
+    </section>
+
+    <!-- ============ PLANO SEMANAL ============ -->
+    <section id="tab-plano" class="tab-content hidden fade-in">
+      <h2 class="text-2xl font-bold mb-1">Planejamento das Semanas</h2>
+      <p class="text-slate-400 text-sm mb-4">Crie semanas, monte grupos de refeições (Manhã, Tarde, Noite...) e navegue pelas semanas passadas. Tudo salvo automaticamente.</p>
+      <div class="glass rounded-2xl p-3 mb-5 flex flex-wrap items-center gap-2">
+        <button onclick="navWeek(-1)" class="w-9 h-9 rounded-lg border border-white/10 hover:bg-white/5">‹</button>
+        <select id="weekSelect" onchange="selectWeek(this.value)" class="flex-1 min-w-[140px] bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm font-semibold"></select>
+        <button onclick="navWeek(1)" class="w-9 h-9 rounded-lg border border-white/10 hover:bg-white/5">›</button>
+        <button onclick="renameWeek()" class="text-xs px-3 py-2 rounded-lg border border-white/10 hover:bg-white/5">✏️ Renomear</button>
+        <button onclick="newWeek()" class="text-xs px-3 py-2 rounded-lg font-semibold text-white glow" style="background:linear-gradient(135deg,#22d3ee,#a855f7);">+ Nova Semana</button>
+        <button onclick="deleteWeek()" class="text-xs px-3 py-2 rounded-lg border border-rose-500/30 text-rose-300 hover:bg-rose-500/10">🗑️</button>
+      </div>
+      <div id="weekGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- ============ CHECKLIST ============ -->
+    <section id="tab-checklist" class="tab-content hidden fade-in">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="text-2xl font-bold">Checklist Diário</h2>
+        <button onclick="addCheckItem()" class="text-sm px-3 py-2 rounded-lg border border-white/10 hover:bg-white/5">+ Tarefa</button>
+      </div>
+      <p class="text-slate-400 text-sm mb-4">Marque conforme for cumprindo. Use "Reiniciar" para começar um novo dia.</p>
+      <div class="glass rounded-2xl p-4 mb-4 flex items-center justify-between gap-3 flex-wrap">
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-slate-300">📅 Dia do checklist:</span>
+          <input id="checkDate" type="date" onchange="updateCheckDate(this.value)" class="bg-[#0f1626] border border-white/10 rounded-lg px-3 py-1.5 text-sm">
+        </div>
+        <span id="checkWeekday" class="text-xs text-slate-400"></span>
+      </div>
+      <div class="glass rounded-2xl p-4 mb-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm text-slate-300">Progresso de hoje</span>
+          <span id="checkPct" class="text-sm font-bold text-cyan-300">0%</span>
+        </div>
+        <div class="h-3 rounded-full bg-white/5 overflow-hidden">
+          <div id="checkBar" class="h-full transition-all" style="width:0%; background:linear-gradient(90deg,#22d3ee,#a855f7);"></div>
+        </div>
+      </div>
+      <div id="checkList" class="space-y-2"></div>
+      <button onclick="resetChecks()" class="mt-5 text-sm px-4 py-2 rounded-lg border border-rose-500/30 text-rose-300 hover:bg-rose-500/10">↺ Reiniciar checklist</button>
+    </section>
+  </main>
+
+  <!-- ===== MODAL NOVO/EDITAR REGISTRO ===== -->
+  <div id="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(2,6,15,.7); backdrop-filter:blur(4px);">
+    <div class="glass rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto glow p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="modalTitle" class="text-xl font-bold">Novo Registro</h3>
+        <button onclick="closeModal()" class="w-9 h-9 rounded-lg hover:bg-white/10 text-xl">✕</button>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-3 mb-4">
+        <div>
+          <label class="text-xs text-slate-400">Título / Período</label>
+          <input id="mTitle" type="text" placeholder="Ex: Dia 1, Semana 4, Mês 2..." class="w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400">Data</label>
+          <input id="mDate" type="date" class="w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400">Peso (kg) <span class="text-slate-600">opcional</span></label>
+          <input id="mWeight" type="number" step="0.1" placeholder="ex: 75.5" oninput="calcIMC()" class="w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400">Altura (cm) <span class="text-slate-600">opcional</span></label>
+          <input id="mHeight" type="number" step="0.1" placeholder="ex: 175" oninput="calcIMC()" class="w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="text-xs text-slate-400">Observações</label>
+          <input id="mNotes" type="text" placeholder="como está se sentindo..." class="w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm">
+        </div>
+      </div>
+
+      <!-- IMC automático -->
+      <div id="imcBox" class="glass rounded-xl p-3 mb-4 flex items-center justify-between gap-3">
+        <div>
+          <div class="text-xs text-slate-400">IMC (calculado automaticamente)</div>
+          <div class="text-2xl font-bold mt-0.5"><span id="imcValue">—</span></div>
+        </div>
+        <span id="imcLabel" class="text-xs font-semibold px-3 py-1.5 rounded-full border border-white/10 text-slate-400">informe peso e altura</span>
+      </div>
+
+      <!-- Medidas / circunferências -->
+      <p class="text-xs text-slate-400 mb-2">📏 Circunferências (cm) <span class="text-slate-600">opcional</span></p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
+        <div><label class="text-[11px] text-slate-400">Peito</label><input id="m_peito" type="number" step="0.1" class="meas w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm"></div>
+        <div><label class="text-[11px] text-slate-400">Abdômen</label><input id="m_abdomen" type="number" step="0.1" class="meas w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm"></div>
+        <div><label class="text-[11px] text-slate-400">Quadril</label><input id="m_quadril" type="number" step="0.1" class="meas w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm"></div>
+        <div><label class="text-[11px] text-slate-400">Braço Direito</label><input id="m_bracoD" type="number" step="0.1" class="meas w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm"></div>
+        <div><label class="text-[11px] text-slate-400">Braço Esquerdo</label><input id="m_bracoE" type="number" step="0.1" class="meas w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm"></div>
+        <div><label class="text-[11px] text-slate-400">Coxa Direita</label><input id="m_coxaD" type="number" step="0.1" class="meas w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm"></div>
+        <div><label class="text-[11px] text-slate-400">Coxa Esquerda</label><input id="m_coxaE" type="number" step="0.1" class="meas w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm"></div>
+        <div><label class="text-[11px] text-slate-400">Panturrilha Direita</label><input id="m_pantD" type="number" step="0.1" class="meas w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm"></div>
+        <div><label class="text-[11px] text-slate-400">Panturrilha Esquerda</label><input id="m_pantE" type="number" step="0.1" class="meas w-full mt-1 bg-[#0f1626] border border-white/10 rounded-lg px-3 py-2 text-sm"></div>
+      </div>
+
+      <p class="text-xs text-slate-400 mb-2">Fotos (toque para adicionar/trocar)</p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5" id="modalPhotos"></div>
+      <div class="flex justify-end gap-2">
+        <button onclick="closeModal()" class="px-4 py-2 rounded-lg border border-white/10 text-sm hover:bg-white/5">Cancelar</button>
+        <button onclick="saveSession()" class="px-5 py-2 rounded-lg font-semibold text-sm text-white glow" style="background:linear-gradient(135deg,#22d3ee,#a855f7);">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LIGHTBOX ===== -->
+  <div id="lightbox" class="hidden fixed inset-0 z-[60] items-center justify-center p-4" style="background:rgba(2,6,15,.92);" onclick="closeLightbox()">
+    <img id="lightboxImg" class="max-w-full max-h-full rounded-xl" src="">
+  </div>
+
+  <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[70] hidden px-4 py-2.5 rounded-xl text-sm font-medium glass glow"></div>
+
+<script>
+/* ============================================================
+   IndexedDB para fotos (base64), localStorage para metadados
+============================================================ */
+const ANGLES = [
+  {key:'frente', label:'Frente', icon:'🧍'},
+  {key:'ladoDir', label:'Lado Direito', icon:'➡️'},
+  {key:'ladoEsq', label:'Lado Esquerdo', icon:'⬅️'},
+  {key:'costas', label:'Costas', icon:'🔄'},
+];
+const MEAS = [
+  {key:'peito', label:'Peito'},
+  {key:'abdomen', label:'Abdômen'},
+  {key:'quadril', label:'Quadril'},
+  {key:'bracoD', label:'Braço Dir.'},
+  {key:'bracoE', label:'Braço Esq.'},
+  {key:'coxaD', label:'Coxa Dir.'},
+  {key:'coxaE', label:'Coxa Esq.'},
+  {key:'pantD', label:'Pant. Dir.'},
+  {key:'pantE', label:'Pant. Esq.'},
+];
+let db;
+function openDB(){
+  return new Promise((res,rej)=>{
+    const r = indexedDB.open('evolucaoDB',2);
+    r.onupgradeneeded = e=>{ const d=e.target.result; if(!d.objectStoreNames.contains('photos')) d.createObjectStore('photos'); if(!d.objectStoreNames.contains('meta')) d.createObjectStore('meta'); };
+    r.onsuccess = e=>{ db=e.target.result; res(); };
+    r.onerror = e=>rej(e);
+  });
+}
+function putMeta(k,v){ return new Promise((res,rej)=>{ const t=db.transaction('meta','readwrite'); t.objectStore('meta').put(v,k); t.oncomplete=res; t.onerror=()=>rej(t.error); t.onabort=()=>rej(t.error); }); }
+function getMeta(k){ return new Promise(res=>{ const t=db.transaction('meta','readonly'); const rq=t.objectStore('meta').get(k); rq.onsuccess=()=>res(rq.result||null); rq.onerror=()=>res(null); }); }
+function putPhoto(id,data){ return new Promise((res,rej)=>{ const t=db.transaction('photos','readwrite'); t.objectStore('photos').put(data,id); t.oncomplete=res; t.onerror=()=>rej(t.error); t.onabort=()=>rej(t.error); }); }
+function getPhoto(id){ return new Promise((res)=>{ const t=db.transaction('photos','readonly'); const rq=t.objectStore('photos').get(id); rq.onsuccess=()=>res(rq.result||null); rq.onerror=()=>res(null); }); }
+function delPhoto(id){ return new Promise((res,rej)=>{ const t=db.transaction('photos','readwrite'); t.objectStore('photos').delete(id); t.oncomplete=res; t.onerror=()=>rej(t.error); t.onabort=()=>rej(t.error); }); }
+function allPhotos(){ return new Promise((res)=>{ const t=db.transaction('photos','readonly'); const s=t.objectStore('photos'); const out={}; const cur=s.openCursor(); cur.onsuccess=e=>{ const c=e.target.result; if(c){ out[c.key]=c.value; c.continue(); } else res(out); }; }); }
+
+/* ============ Estado ============ */
+let state = JSON.parse(localStorage.getItem('evolucaoState')||'null') || {
+  sessions: [],
+  week: {},
+  checks: [
+    {t:'Beber 3L de água', d:false},
+    {t:'Treino do dia', d:false},
+    {t:'Refeições da dieta', d:false},
+    {t:'Dormir 8h', d:false},
+  ],
+};
+const DAYS = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
+function defaultDay(){ return { date:'', meals:[{label:'Manhã',items:[]},{label:'Tarde',items:[]},{label:'Noite',items:[]}], workouts:[] }; }
+function newWeekObj(label){ const days={}; DAYS.forEach(d=>days[d]=defaultDay()); return {id:'w'+Date.now()+Math.random().toString(36).slice(2,5), label:label||'Semana', days}; }
+function textToItems(txt,done){ if(!txt) return []; return txt.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>({text:l,done:!!done})); }
+function migrateWeeks(){
+  if(!state.weeks){
+    state.weeks=[]; const w=newWeekObj('Semana 1');
+    if(state.week){ DAYS.forEach(d=>{ const old=state.week[d]; if(old){ w.days[d].date=old.date||''; w.days[d].workouts=textToItems(old.workout,old.workoutDone); if(old.meal) w.days[d].meals=[{label:'Refeições',items:textToItems(old.meal,old.mealDone)}]; } }); delete state.week; }
+    state.weeks.push(w); state.currentWeekId=w.id;
+  }
+  // garantir formato novo (itens em listas) para todas as semanas
+  state.weeks.forEach(w=>{ DAYS.forEach(d=>{
+    if(!w.days[d]) w.days[d]=defaultDay();
+    const day=w.days[d];
+    if(!Array.isArray(day.workouts)) day.workouts = textToItems(day.workout, day.workoutDone);
+    delete day.workout; delete day.workoutDone;
+    if(!Array.isArray(day.meals)) day.meals=[{label:'Manhã',items:[]},{label:'Tarde',items:[]},{label:'Noite',items:[]}];
+    day.meals.forEach(m=>{ if(!Array.isArray(m.items)) m.items = textToItems(m.text, m.done); delete m.text; delete m.done; });
+  }); });
+  if(!state.currentWeekId && state.weeks.length) state.currentWeekId=state.weeks[0].id;
+}
+migrateWeeks();
+if(!state.checkDate) state.checkDate = new Date().toISOString().slice(0,10);
+let suspendAutoSave = false;
+function save(){ localStorage.setItem('evolucaoState', JSON.stringify(state)); if(!suspendAutoSave && typeof scheduleAutoSave==='function') scheduleAutoSave(); }
+
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.remove('hidden'); clearTimeout(t._x); t._x=setTimeout(()=>t.classList.add('hidden'),2200); }
+
+/* ============ Tema ============ */
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  const b=document.getElementById('themeBtn');
+  if(b) b.innerHTML = theme==='light' ? '☀️ <span class="hidden sm:inline">Claro</span>' : '🌙 <span class="hidden sm:inline">Escuro</span>';
+}
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme')==='light' ? 'light' : 'dark';
+  const next = cur==='light' ? 'dark' : 'light';
+  localStorage.setItem('evolucaoTheme', next);
+  applyTheme(next);
+}
+applyTheme(localStorage.getItem('evolucaoTheme') || 'dark');
+
+/* ============ Tabs ============ */
+document.querySelectorAll('.tab-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('nav-active'));
+    b.classList.add('nav-active');
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.add('hidden'));
+    const el=document.getElementById('tab-'+b.dataset.tab);
+    el.classList.remove('hidden'); el.classList.add('fade-in');
+    if(b.dataset.tab==='comparar') buildCompareSelectors();
+  });
+});
+
+/* ============ FOTOS / SESSÕES ============ */
+let editingId = null;
+let tempPhotos = {}; // angleKey -> base64 (durante modal)
+
+function openNewSession(){
+  editingId = null;
+  tempPhotos = {};
+  document.getElementById('modalTitle').textContent = 'Novo Registro';
+  document.getElementById('mTitle').value = state.sessions.length===0 ? 'Dia 1' : 'Registro '+(state.sessions.length+1);
+  document.getElementById('mDate').value = new Date().toISOString().slice(0,10);
+  document.getElementById('mWeight').value='';
+  // herda altura do último registro para facilitar
+  const last = state.sessions[state.sessions.length-1];
+  document.getElementById('mHeight').value = (last && last.height) ? last.height : '';
+  document.getElementById('mNotes').value='';
+  MEAS.forEach(m=>{ document.getElementById('m_'+m.key).value=''; });
+  calcIMC();
+  renderModalPhotos();
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+async function openEditSession(id){
+  const s = state.sessions.find(x=>x.id===id);
+  if(!s) return;
+  editingId = id;
+  tempPhotos = {};
+  for(const a of ANGLES){
+    const key = id+'_'+a.key;
+    const p = await getPhoto(key);
+    if(p) tempPhotos[a.key]=p;
+  }
+  document.getElementById('modalTitle').textContent='Editar Registro';
+  document.getElementById('mTitle').value=s.title;
+  document.getElementById('mDate').value=s.date;
+  document.getElementById('mWeight').value=s.weight||'';
+  document.getElementById('mHeight').value=s.height||'';
+  document.getElementById('mNotes').value=s.notes||'';
+  const meas = s.meas||{};
+  MEAS.forEach(m=>{ document.getElementById('m_'+m.key).value = meas[m.key]||''; });
+  calcIMC();
+  renderModalPhotos();
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function calcIMC(){
+  const w = parseFloat(document.getElementById('mWeight').value);
+  const hcm = parseFloat(document.getElementById('mHeight').value);
+  const vEl = document.getElementById('imcValue');
+  const lEl = document.getElementById('imcLabel');
+  if(!w || !hcm){ vEl.textContent='—'; lEl.textContent='informe peso e altura'; lEl.style.background=''; lEl.style.color=''; return; }
+  const h = hcm/100;
+  const imc = w/(h*h);
+  vEl.textContent = imc.toFixed(1);
+  let cat, color;
+  if(imc<18.5){ cat='Abaixo do peso'; color='#38bdf8'; }
+  else if(imc<25){ cat='Peso normal'; color='#34d399'; }
+  else if(imc<30){ cat='Sobrepeso'; color='#f59e0b'; }
+  else if(imc<35){ cat='Obesidade I'; color='#fb923c'; }
+  else if(imc<40){ cat='Obesidade II'; color='#f43f5e'; }
+  else { cat='Obesidade III'; color='#e11d48'; }
+  lEl.textContent = cat;
+  lEl.style.background = color+'22';
+  lEl.style.color = color;
+}
+
+function closeModal(){ document.getElementById('modal').classList.add('hidden'); }
+
+function renderModalPhotos(){
+  const wrap = document.getElementById('modalPhotos');
+  wrap.innerHTML='';
+  ANGLES.forEach(a=>{
+    const has = tempPhotos[a.key];
+    const div = document.createElement('div');
+    div.innerHTML = `
+      <label class="block cursor-pointer group">
+        <div class="photo-slot rounded-xl overflow-hidden border border-white/10 flex items-center justify-center relative ${has?'':'bg-[#0f1626]'}">
+          ${has?`<img src="${has}" class="w-full h-full object-cover">`:`<div class="text-center text-slate-500"><div class="text-2xl">${a.icon}</div><div class="text-[11px] mt-1">Adicionar</div></div>`}
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-xs font-semibold">${has?'Trocar foto':''}</div>
+        </div>
+        <input type="file" accept="image/*" onchange="onPhotoPick(event,'${a.key}')">
+        <div class="flex items-center justify-between mt-1.5">
+          <span class="text-[11px] text-slate-300">${a.label}</span>
+          ${has?`<button type="button" onclick="removeTempPhoto('${a.key}')" class="text-[11px] text-rose-400 hover:text-rose-300">remover</button>`:''}
+        </div>
+      </label>`;
+    wrap.appendChild(div);
+  });
+}
+
+function onPhotoPick(e, angleKey){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    // comprimir
+    const img = new Image();
+    img.onload = ()=>{
+      const max=1000;
+      let {width:w,height:h}=img;
+      if(w>max||h>max){ const r=Math.min(max/w,max/h); w*=r; h*=r; }
+      const c=document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      tempPhotos[angleKey]=c.toDataURL('image/jpeg',0.82);
+      renderModalPhotos();
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function removeTempPhoto(k){ delete tempPhotos[k]; renderModalPhotos(); }
+
+async function saveSession(){
+  const title = document.getElementById('mTitle').value.trim()||'Registro';
+  const date = document.getElementById('mDate').value || new Date().toISOString().slice(0,10);
+  const weight = document.getElementById('mWeight').value;
+  const height = document.getElementById('mHeight').value;
+  const notes = document.getElementById('mNotes').value.trim();
+  const meas = {};
+  MEAS.forEach(m=>{ const v=document.getElementById('m_'+m.key).value; if(v) meas[m.key]=v; });
+  let id = editingId;
+  if(!id){ id = 's'+Date.now(); state.sessions.push({id,title,date,weight,height,notes,meas}); }
+  else { const s=state.sessions.find(x=>x.id===id); s.title=title; s.date=date; s.weight=weight; s.height=height; s.notes=notes; s.meas=meas; }
+  // salvar metadados primeiro (sempre)
+  state.sessions.sort((x,y)=> new Date(x.date)-new Date(y.date));
+  save();
+  // salvar fotos (sem travar o salvamento caso uma falhe)
+  let photoErr=false;
+  for(const a of ANGLES){
+    const key=id+'_'+a.key;
+    try{
+      if(tempPhotos[a.key]) await putPhoto(key, tempPhotos[a.key]);
+      else await delPhoto(key);
+    }catch(err){ photoErr=true; console.error('Falha ao salvar foto', a.key, err); }
+  }
+  closeModal(); renderSessions(); buildCompareSelectors();
+  toast(photoErr ? 'Registro salvo, mas uma foto falhou ⚠️' : 'Registro salvo ✔');
+}
+
+async function deleteSession(id){
+  if(!confirm('Apagar este registro e suas fotos?')) return;
+  state.sessions = state.sessions.filter(s=>s.id!==id);
+  for(const a of ANGLES) await delPhoto(id+'_'+a.key);
+  save(); renderSessions(); buildCompareSelectors(); toast('Registro apagado');
+}
+
+async function renderSessions(){
+  const list = document.getElementById('sessionsList');
+  const empty = document.getElementById('emptyState');
+  list.innerHTML='';
+  if(state.sessions.length===0){ empty.classList.remove('hidden'); renderStats(); return; }
+  empty.classList.add('hidden');
+  const photos = await allPhotos();
+  const first = state.sessions[0];
+  state.sessions.forEach((s,i)=>{
+    const dayNum = first ? Math.round((new Date(s.date)-new Date(first.date))/86400000)+1 : 1;
+    const card = document.createElement('div');
+    card.className='glass rounded-2xl p-4';
+    let photoHTML='';
+    ANGLES.forEach(a=>{
+      const p = photos[s.id+'_'+a.key];
+      photoHTML+=`<div>
+        <div class="photo-slot rounded-xl overflow-hidden border border-white/10 ${p?'cursor-pointer':'bg-[#0f1626] flex items-center justify-center'}" ${p?`onclick="openLightbox('${s.id}_${a.key}')"`:''}>
+          ${p?`<img src="${p}" class="w-full h-full object-cover">`:`<div class="text-center text-slate-600"><div class="text-xl">${a.icon}</div><div class="text-[10px] mt-1">sem foto</div></div>`}
+        </div>
+        <p class="text-[11px] text-slate-400 mt-1 text-center">${a.label}</p>
+      </div>`;
+    });
+    const im = imcData(s);
+    const imcBadge = im ? `<span class="text-[11px] font-semibold px-2 py-0.5 rounded-full" style="background:${im.color}22;color:${im.color};">IMC ${im.imc} · ${im.cat}</span>` : '';
+    let measHTML='';
+    if(s.meas && Object.keys(s.meas).length){
+      measHTML = `<div class="mt-3 pt-3 border-t border-white/10">
+        <p class="text-[11px] text-slate-400 mb-2">📏 Circunferências (cm)</p>
+        <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 items-stretch">` +
+        MEAS.filter(m=>s.meas[m.key]).map(m=>`<div class="bg-[#0f1626] rounded-lg px-2 py-1.5 text-center flex flex-col justify-center"><div class="text-sm font-bold">${s.meas[m.key]}</div><div class="text-[10px] text-slate-400 leading-tight">${m.label}</div></div>`).join('') +
+        `</div></div>`;
+    }
+    card.innerHTML=`
+      <div class="flex items-start justify-between gap-3 mb-3 flex-wrap">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl flex flex-col items-center justify-center text-white font-bold leading-none" style="background:linear-gradient(135deg,#22d3ee,#a855f7);"><span class="text-[9px] font-normal opacity-80">DIA</span><span>${dayNum}</span></div>
+          <div>
+            <h3 class="font-bold">${s.title}</h3>
+            <p class="text-xs text-slate-400">${formatDate(s.date)} ${s.weight?'· ⚖️ '+s.weight+'kg':''} ${s.height?'· 📐 '+s.height+'cm':''}</p>
+            <div class="mt-1">${imcBadge}</div>
+            ${s.notes?`<p class="text-xs text-slate-500 mt-0.5 italic">"${s.notes}"</p>`:''}
+          </div>
+        </div>
+        <div class="flex gap-1.5">
+          <button onclick="openEditSession('${s.id}')" class="text-xs px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/5">✏️ Editar</button>
+          <button onclick="deleteSession('${s.id}')" class="text-xs px-3 py-1.5 rounded-lg border border-rose-500/30 text-rose-300 hover:bg-rose-500/10">🗑️</button>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">${photoHTML}</div>
+      ${measHTML}`;
+    list.appendChild(card);
+  });
+  renderStats();
+}
+
+function renderStats(){
+  const bar=document.getElementById('statsBar');
+  const n=state.sessions.length;
+  let days=0, wDelta='—';
+  if(n>0){
+    const f=state.sessions[0], l=state.sessions[n-1];
+    days=Math.round((new Date(l.date)-new Date(f.date))/86400000);
+    if(f.weight && l.weight){ const d=(parseFloat(l.weight)-parseFloat(f.weight)).toFixed(1); wDelta=(d>0?'+':'')+d+' kg'; }
+  }
+  const cards=[
+    {l:'Registros',v:n,i:'📸'},
+    {l:'Dias de jornada',v:n>0?days:0,i:'📅'},
+    {l:'Variação de peso',v:wDelta,i:'⚖️'},
+    {l:'Último registro',v:n>0?formatDate(state.sessions[n-1].date):'—',i:'⏱️'},
+  ];
+  bar.innerHTML=cards.map(c=>`<div class="glass rounded-xl p-3"><div class="text-lg">${c.i}</div><div class="text-xl font-bold mt-1">${c.v}</div><div class="text-[11px] text-slate-400">${c.l}</div></div>`).join('');
+}
+
+function formatDate(d){ if(!d) return '—'; const p=d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+function imcData(s){
+  const w=parseFloat(s.weight), hcm=parseFloat(s.height);
+  if(!w||!hcm) return null;
+  const h=hcm/100, imc=w/(h*h);
+  let cat,color;
+  if(imc<18.5){cat='Abaixo';color='#38bdf8';}
+  else if(imc<25){cat='Normal';color='#34d399';}
+  else if(imc<30){cat='Sobrepeso';color='#f59e0b';}
+  else if(imc<35){cat='Obesidade I';color='#fb923c';}
+  else if(imc<40){cat='Obesidade II';color='#f43f5e';}
+  else{cat='Obesidade III';color='#e11d48';}
+  return {imc:imc.toFixed(1),cat,color};
+}
+
+/* ============ Lightbox ============ */
+async function openLightbox(key){ const p=await getPhoto(key); if(p){ document.getElementById('lightboxImg').src=p; document.getElementById('lightbox').classList.remove('hidden'); document.getElementById('lightbox').classList.add('flex'); } }
+function closeLightbox(){ const l=document.getElementById('lightbox'); l.classList.add('hidden'); l.classList.remove('flex'); }
+
+/* ============ COMPARAR ============ */
+function buildCompareSelectors(){
+  const a=document.getElementById('cmpA'), b=document.getElementById('cmpB');
+  if(!a||!b) return;
+  const opts = state.sessions.map(s=>`<option value="${s.id}">${s.title} · ${formatDate(s.date)}</option>`).join('');
+  a.innerHTML=opts; b.innerHTML=opts;
+  if(state.sessions.length>=2){ a.value=state.sessions[0].id; b.value=state.sessions[state.sessions.length-1].id; }
+  // limpa o resultado/diferenças se não há registros suficientes
+  if(state.sessions.length<2){
+    const diff=document.getElementById('cmpDiff'); if(diff){ diff.innerHTML=''; diff.classList.add('hidden'); }
+  }
+  renderCompare();
+}
+['cmpA','cmpB','cmpAngle'].forEach(id=>document.addEventListener('change',e=>{ if(e.target.id===id) renderCompare(); }));
+
+async function renderCompare(){
+  const res=document.getElementById('cmpResult');
+  if(state.sessions.length<2){ res.innerHTML=`<div class="col-span-2 text-center py-16 glass rounded-2xl text-slate-400">Você precisa de pelo menos 2 registros para comparar.</div>`; return; }
+  const idA=document.getElementById('cmpA').value, idB=document.getElementById('cmpB').value;
+  const ang=document.getElementById('cmpAngle').value;
+  const sA=state.sessions.find(s=>s.id===idA), sB=state.sessions.find(s=>s.id===idB);
+  const pA=await getPhoto(idA+'_'+ang), pB=await getPhoto(idB+'_'+ang);
+  function statRows(s){
+    const im=imcData(s);
+    let rows=`
+      <div class="flex justify-between py-1 border-b border-white/5"><span class="text-slate-400">⚖️ Peso</span><span class="font-semibold">${s.weight?s.weight+' kg':'—'}</span></div>
+      <div class="flex justify-between py-1 border-b border-white/5"><span class="text-slate-400">📐 Altura</span><span class="font-semibold">${s.height?s.height+' cm':'—'}</span></div>
+      <div class="flex justify-between py-1 border-b border-white/5"><span class="text-slate-400">IMC</span><span class="font-semibold" style="${im?'color:'+im.color:''}">${im?im.imc+' · '+im.cat:'—'}</span></div>`;
+    MEAS.forEach(m=>{ const v=s.meas&&s.meas[m.key]; rows+=`<div class="flex justify-between py-1 border-b border-white/5"><span class="text-slate-400">${m.label}</span><span class="font-semibold">${v?v+' cm':'—'}</span></div>`; });
+    return rows;
+  }
+  function block(s,p,tag){ return `<div class="glass rounded-2xl p-3">
+      <div class="flex items-center justify-between mb-2"><span class="text-xs font-semibold text-slate-300">${tag}: ${s?s.title:''}</span><span class="text-[11px] text-slate-500">${s?formatDate(s.date):''}</span></div>
+      <div class="photo-slot rounded-xl overflow-hidden border border-white/10 ${p?'cursor-pointer':'bg-[#0f1626] flex items-center justify-center'}" ${p?`onclick="document.getElementById('lightboxImg').src='${p}';document.getElementById('lightbox').classList.remove('hidden');document.getElementById('lightbox').classList.add('flex');`:''}">
+        ${p?`<img src="${p}" class="w-full h-full object-cover">`:`<div class="text-slate-600 text-sm">sem foto neste ângulo</div>`}
+      </div>
+      <div class="mt-3 text-xs">${s?statRows(s):''}</div>
+    </div>`; }
+
+  // resumo das diferenças
+  function diffRow(label, a, b, unit, goodDown){
+    const va=parseFloat(a), vb=parseFloat(b);
+    if(isNaN(va)||isNaN(vb)) return '';
+    const d=vb-va;
+    const sign=d>0?'+':'';
+    let color='#94a3b8';
+    if(d!==0){ const positive = goodDown ? d<0 : d>0; color = positive ? '#34d399' : '#f43f5e'; }
+    const arrow = d>0?'▲':(d<0?'▼':'•');
+    return `<div class="flex items-center justify-between py-1.5 px-2 rounded-lg" style="background:${color}14;"><span class="text-slate-300">${label}</span><span class="font-bold" style="color:${color}">${arrow} ${sign}${d.toFixed(1)} ${unit}</span></div>`;
+  }
+  let diffHTML='';
+  if(sA && sB){
+    const imA=imcData(sA), imB=imcData(sB);
+    diffHTML += diffRow('⚖️ Peso', sA.weight, sB.weight, 'kg', true);
+    if(imA&&imB) diffHTML += diffRow('IMC', imA.imc, imB.imc, '', true);
+    MEAS.forEach(m=>{ if(sA.meas&&sB.meas&&sA.meas[m.key]&&sB.meas[m.key]) diffHTML += diffRow(m.label, sA.meas[m.key], sB.meas[m.key], 'cm', false); });
+  }
+
+  res.innerHTML = block(sA,pA,'ANTES')+block(sB,pB,'DEPOIS');
+  const diffBox=document.getElementById('cmpDiff');
+  if(diffBox){
+    diffBox.innerHTML = diffHTML ? `<h3 class="text-sm font-bold mb-3">📊 Evolução (ANTES → DEPOIS)</h3><div class="grid sm:grid-cols-2 gap-2 text-xs">${diffHTML}</div><p class="text-[11px] text-slate-500 mt-3">Verde = mudança desejada · Vermelho = sentido contrário (peso/IMC menor é melhor; medidas musculares maiores normalmente é melhor — interprete conforme seu objetivo).</p>` : '';
+    diffBox.classList.toggle('hidden', !diffHTML);
+  }
+}
+
+/* ============ SEMANA ============ */
+function getCurrentWeek(){ return state.weeks.find(w=>w.id===state.currentWeekId) || state.weeks[0]; }
+function renderWeek(){
+  // seletor de semanas
+  const sel=document.getElementById('weekSelect');
+  sel.innerHTML=state.weeks.map(w=>`<option value="${w.id}" ${w.id===state.currentWeekId?'selected':''}>${w.label}</option>`).join('');
+  const week=getCurrentWeek();
+  const grid=document.getElementById('weekGrid');
+  grid.innerHTML='';
+  DAYS.forEach((d,i)=>{
+    const day=week.days[d];
+    const col=['#22d3ee','#34d399','#a855f7','#f59e0b','#f43f5e','#38bdf8','#fb7185'][i];
+    const card=document.createElement('div');
+    card.className='glass rounded-2xl p-4';
+    function listItems(arr, kind, mi){
+      return arr.map((it,ii)=>`
+        <div class="flex items-center gap-2 py-1 group">
+          <button onclick="toggleItem('${d}','${kind}',${mi},${ii})" class="w-5 h-5 shrink-0 rounded border flex items-center justify-center text-[10px] ${it.done?'border-transparent text-white':'border-slate-600 text-slate-500'}" style="${it.done?(kind==='meal'?'background:linear-gradient(135deg,#22d3ee,#34d399);':'background:linear-gradient(135deg,#a855f7,#f43f5e);'):''}">${it.done?'✓':''}</button>
+          <input value="${(it.text||'').replace(/"/g,'&quot;')}" oninput="editItem('${d}','${kind}',${mi},${ii},this.value)" class="flex-1 min-w-0 bg-transparent text-sm outline-none ${it.done?'check-done':''}">
+          <button onclick="delItem('${d}','${kind}',${mi},${ii})" class="text-slate-600 hover:text-rose-400 text-xs opacity-0 group-hover:opacity-100">✕</button>
+        </div>`).join('');
+    }
+    const mealsHTML=day.meals.map((m,mi)=>{
+      const total=m.items.length, done=m.items.filter(x=>x.done).length;
+      return `
+      <div class="bg-[#0f1626] border border-white/10 rounded-lg p-2 mb-2">
+        <div class="flex items-center justify-between mb-1 gap-1">
+          <input value="${(m.label||'').replace(/"/g,'&quot;')}" oninput="updateMealLabel('${d}',${mi},this.value)" class="bg-transparent text-[11px] font-semibold text-cyan-300 outline-none flex-1 min-w-0">
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span class="text-[10px] ${total&&done===total?'text-emerald-400':'text-slate-500'}">${done}/${total}</span>
+            <button onclick="delMeal('${d}',${mi})" class="text-slate-500 hover:text-rose-400 text-xs">✕</button>
+          </div>
+        </div>
+        ${listItems(m.items,'meal',mi)}
+        <button onclick="addItem('${d}','meal',${mi})" class="w-full text-[11px] py-1 mt-1 rounded border border-dashed border-white/10 text-slate-500 hover:bg-white/5">+ item</button>
+      </div>`;
+    }).join('');
+    const wTotal=day.workouts.length, wDone=day.workouts.filter(x=>x.done).length;
+    card.innerHTML=`
+      <div class="flex items-center justify-between gap-2 mb-3">
+        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:${col}"></span><h3 class="font-bold">${d}</h3></div>
+        <input type="date" value="${day.date||''}" onchange="updateDay('${d}','date',this.value)" class="bg-[#0f1626] border border-white/10 rounded-lg px-2 py-1 text-[11px] text-slate-300">
+      </div>
+      <label class="text-[11px] text-slate-400 flex items-center gap-1 mb-2">🍽️ Alimentação (grupos)</label>
+      ${mealsHTML}
+      <button onclick="addMeal('${d}')" class="w-full text-[11px] py-1.5 rounded-lg border border-dashed border-white/15 text-slate-400 hover:bg-white/5 mb-3">+ adicionar grupo (ex: Pré-treino, Ceia)</button>
+      <div class="flex items-center justify-between mb-2">
+        <label class="text-[11px] text-slate-400 flex items-center gap-1">🏋️ Exercícios</label>
+        <span class="text-[10px] ${wTotal&&wDone===wTotal?'text-emerald-400':'text-slate-500'}">${wDone}/${wTotal}</span>
+      </div>
+      <div class="bg-[#0f1626] border border-white/10 rounded-lg p-2">
+        ${listItems(day.workouts,'workout',0)}
+        <button onclick="addItem('${d}','workout',0)" class="w-full text-[11px] py-1 mt-1 rounded border border-dashed border-white/10 text-slate-500 hover:bg-white/5">+ exercício</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+function updateDay(day,field,val){ getCurrentWeek().days[day][field]=val; save(); }
+function updateMealLabel(day,mi,val){ getCurrentWeek().days[day].meals[mi].label=val; save(); }
+function addMeal(day){ getCurrentWeek().days[day].meals.push({label:'Refeição',items:[]}); save(); renderWeek(); }
+function delMeal(day,mi){ if(!confirm('Apagar este grupo?')) return; getCurrentWeek().days[day].meals.splice(mi,1); save(); renderWeek(); }
+function getList(day,kind,mi){ const dd=getCurrentWeek().days[day]; return kind==='meal'?dd.meals[mi].items:dd.workouts; }
+function addItem(day,kind,mi){ getList(day,kind,mi).push({text:'',done:false}); save(); renderWeek(); setTimeout(()=>{ const grid=document.getElementById('weekGrid'); const inputs=grid.querySelectorAll('input'); },0); }
+function editItem(day,kind,mi,ii,val){ getList(day,kind,mi)[ii].text=val; save(); }
+function toggleItem(day,kind,mi,ii){ const it=getList(day,kind,mi)[ii]; it.done=!it.done; save(); renderWeek(); }
+function delItem(day,kind,mi,ii){ getList(day,kind,mi).splice(ii,1); save(); renderWeek(); }
+function selectWeek(id){ state.currentWeekId=id; save(); renderWeek(); }
+function navWeek(dir){ const idx=state.weeks.findIndex(w=>w.id===state.currentWeekId); const ni=idx+dir; if(ni>=0&&ni<state.weeks.length){ state.currentWeekId=state.weeks[ni].id; save(); renderWeek(); } }
+function newWeek(){ const label=prompt('Nome da nova semana:', 'Semana '+(state.weeks.length+1)); if(label===null) return; const w=newWeekObj(label.trim()||'Semana '+(state.weeks.length+1)); state.weeks.push(w); state.currentWeekId=w.id; save(); renderWeek(); toast('Semana criada ✔'); }
+function renameWeek(){ const w=getCurrentWeek(); const label=prompt('Renomear semana:', w.label); if(label===null) return; w.label=label.trim()||w.label; save(); renderWeek(); }
+function deleteWeek(){ if(state.weeks.length<=1){ toast('Mantenha ao menos 1 semana'); return; } if(!confirm('Apagar esta semana?')) return; const idx=state.weeks.findIndex(w=>w.id===state.currentWeekId); state.weeks.splice(idx,1); state.currentWeekId=state.weeks[Math.max(0,idx-1)].id; save(); renderWeek(); toast('Semana apagada'); }
+
+/* ============ CHECKLIST ============ */
+function renderChecks(){
+  const list=document.getElementById('checkList');
+  list.innerHTML='';
+  state.checks.forEach((c,i)=>{
+    const row=document.createElement('div');
+    row.className='glass rounded-xl p-3 flex items-center gap-3';
+    row.innerHTML=`
+      <button onclick="toggleCheck(${i})" class="w-6 h-6 rounded-md border-2 flex items-center justify-center transition ${c.d?'border-transparent':'border-slate-500'}" style="${c.d?'background:linear-gradient(135deg,#22d3ee,#a855f7);':''}">${c.d?'<span class="text-white text-sm">✓</span>':''}</button>
+      <input value="${c.t.replace(/"/g,'&quot;')}" oninput="editCheck(${i},this.value)" class="flex-1 bg-transparent text-sm outline-none ${c.d?'check-done':''}">
+      <button onclick="delCheck(${i})" class="text-slate-500 hover:text-rose-400 text-sm">✕</button>`;
+    list.appendChild(row);
+  });
+  const total=state.checks.length, done=state.checks.filter(c=>c.d).length;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('checkPct').textContent=pct+'%';
+  document.getElementById('checkBar').style.width=pct+'%';
+  const di=document.getElementById('checkDate'); if(di) di.value=state.checkDate;
+  const wd=document.getElementById('checkWeekday');
+  if(wd && state.checkDate){ const names=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado']; const dt=new Date(state.checkDate+'T00:00'); wd.textContent=names[dt.getDay()]+' · '+formatDate(state.checkDate); }
+}
+function updateCheckDate(v){ state.checkDate=v||new Date().toISOString().slice(0,10); save(); renderChecks(); }
+function toggleCheck(i){ state.checks[i].d=!state.checks[i].d; save(); renderChecks(); if(state.checks.every(c=>c.d)&&state.checks.length) toast('🎉 Tudo concluído hoje!'); }
+function editCheck(i,v){ state.checks[i].t=v; save(); }
+function delCheck(i){ state.checks.splice(i,1); save(); renderChecks(); }
+function addCheckItem(){ state.checks.push({t:'Nova tarefa',d:false}); save(); renderChecks(); }
+function resetChecks(){ state.checks.forEach(c=>c.d=false); state.checkDate=new Date().toISOString().slice(0,10); save(); renderChecks(); toast('Checklist reiniciado para hoje'); }
+
+/* ============ BACKUP (pasta/arquivo) ============ */
+let dirHandle = null;
+const FILE_NAME = 'evolucao-dados.json';
+
+async function buildBackup(){ const photos = await allPhotos(); return JSON.stringify({state,photos}); }
+
+// converte dataURL (base64) em Blob para gravar como arquivo de imagem real
+function dataURLtoBlob(dataURL){
+  const parts = dataURL.split(','); const mime = (parts[0].match(/:(.*?);/)||[])[1] || 'image/jpeg';
+  const bin = atob(parts[1]); const len = bin.length; const arr = new Uint8Array(len);
+  for(let i=0;i<len;i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], {type:mime});
+}
+
+// salvamento automático (debounced) na pasta conectada
+let autoSaveTimer=null, autoSaving=false;
+function scheduleAutoSave(){
+  if(!dirHandle || suspendAutoSave) return;
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(()=>{ if(!autoSaving) saveToFolder(true); }, 1500);
+}
+
+// states: 'none' (sem pasta), 'pending' (pasta lembrada mas precisa reconectar), 'connected' (ativa)
+function updateFolderBtn(stateName){
+  const b=document.getElementById('folderBtn');
+  const dot=document.getElementById('folderDot');
+  const label=document.getElementById('folderLabel');
+  b.classList.remove('nav-active');
+  if(stateName==='connected' && dirHandle){
+    b.title='Pasta conectada: '+dirHandle.name;
+    dot.className='w-2 h-2 rounded-full bg-emerald-400';
+    label.textContent=dirHandle.name;
+    b.classList.add('nav-active');
+  } else if(stateName==='pending' && dirHandle){
+    b.title='Clique para reconectar a pasta '+dirHandle.name;
+    dot.className='w-2 h-2 rounded-full bg-amber-400';
+    label.textContent='Reconectar pasta';
+  } else {
+    b.title='Nenhuma pasta selecionada';
+    dot.className='w-2 h-2 rounded-full bg-slate-500';
+    label.textContent='Escolher pasta';
+  }
+}
+
+async function chooseFolder(){
+  if(!window.showDirectoryPicker){ toast('Seu navegador não suporta pastas. Use "Salvar" para baixar.'); return; }
+  try{
+    dirHandle = await window.showDirectoryPicker({mode:'readwrite'});
+    await putMeta('dirHandle', dirHandle);
+    updateFolderBtn('connected');
+    // se já existir um arquivo de dados na pasta, importar em vez de sobrescrever
+    const existing = await readFolderFile();
+    if(existing!==null){
+      const hasLocal = state.sessions.length>0 || state.weeks.some(w=>JSON.stringify(w.days)!==JSON.stringify(newWeekObj().days));
+      let importIt = true;
+      if(hasLocal) importIt = confirm('Já existe um arquivo salvo nesta pasta.\n\nOK = Importar os dados da pasta (substitui o que está aberto agora)\nCancelar = Manter os dados atuais e sobrescrever o arquivo da pasta');
+      if(importIt){
+        await applyBackupData(existing);
+        toast('Dados importados ✔ Salvamento automático ativado');
+        return;
+      }
+    }
+    await saveToFolder();
+    toast('Pasta conectada ✔ Tudo será salvo automaticamente');
+  }catch(e){ /* cancelado */ }
+}
+
+// lê o arquivo de dados da pasta conectada; retorna objeto {state,photos} ou null
+async function readFolderFile(){
+  if(!dirHandle) return null;
+  try{
+    const perm = await dirHandle.requestPermission({mode:'readwrite'});
+    if(perm!=='granted') return null;
+    const fh = await dirHandle.getFileHandle(FILE_NAME,{create:false});
+    const file = await fh.getFile();
+    const txt = await file.text();
+    if(!txt.trim()) return null;
+    return JSON.parse(txt);
+  }catch(e){ return null; /* arquivo não existe ainda */ }
+}
+
+// aplica um backup {state,photos} ao app
+async function applyBackupData(data){
+  if(!data || !data.state) return;
+  suspendAutoSave = true; // carregar dados não deve disparar regravação pesada
+  state = data.state; save();
+  migrateWeeks();
+  if(!state.checkDate) state.checkDate = new Date().toISOString().slice(0,10);
+  if(data.photos){ for(const k in data.photos){ try{ await putPhoto(k, data.photos[k]); }catch(e){} } }
+  renderSessions(); renderWeek(); renderChecks();
+  suspendAutoSave = false;
+}
+
+async function saveToFolder(silent){
+  if(autoSaving) return;
+  autoSaving = true;
+  try{
+    if(dirHandle && window.showDirectoryPicker){
+      try{
+        const perm = await dirHandle.requestPermission({mode:'readwrite'});
+        if(perm!=='granted'){ if(!silent) toast('Permissão negada na pasta'); return; }
+        // 1) grava o JSON com todos os dados (garante a importação)
+        const data = await buildBackup();
+        const fh = await dirHandle.getFileHandle(FILE_NAME,{create:true});
+        const w = await fh.createWritable();
+        await w.write(data); await w.close();
+        // 2) grava as fotos como arquivos .jpg reais dentro de uma subpasta "fotos"
+        await savePhotoFiles();
+        updateFolderBtn('connected');
+        if(!silent) toast('Salvo na pasta '+dirHandle.name+' ✔');
+        return;
+      }catch(e){ if(!silent) toast('Erro ao salvar na pasta'); return; }
+    }
+    // sem pasta conectada -> fallback de download (somente quando clicado)
+    if(silent) return;
+    const data = await buildBackup();
+    if(window.showSaveFilePicker){
+      try{
+        const fh = await window.showSaveFilePicker({suggestedName:'evolucao-backup-'+new Date().toISOString().slice(0,10)+'.json', types:[{description:'JSON',accept:{'application/json':['.json']}}]});
+        const w = await fh.createWritable(); await w.write(data); await w.close();
+        toast('Arquivo salvo ✔'); return;
+      }catch(e){ if(e.name==='AbortError') return; }
+    }
+    const blob = new Blob([data],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='evolucao-backup-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+    toast('Backup baixado 💾');
+  } finally { autoSaving = false; }
+}
+
+// grava cada foto como arquivo .jpg dentro da subpasta "fotos"
+async function savePhotoFiles(){
+  if(!dirHandle) return;
+  try{
+    const photos = await allPhotos();
+    const fotosDir = await dirHandle.getDirectoryHandle('fotos', {create:true});
+    for(const key in photos){
+      try{
+        const s = state.sessions.find(x=> key.startsWith(x.id+'_'));
+        const angle = key.split('_').slice(1).join('_');
+        const nice = s ? (s.title+'_'+s.date+'_'+angle) : key;
+        const fileName = nice.replace(/[^a-zA-Z0-9-_]/g,'_') + '.jpg';
+        const blob = dataURLtoBlob(photos[key]);
+        const fh = await fotosDir.getFileHandle(fileName, {create:true});
+        const w = await fh.createWritable(); await w.write(blob); await w.close();
+      }catch(e){}
+    }
+  }catch(e){}
+}
+function exportData(){ saveToFolder(); }
+function importData(e){
+  const file=e.target.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=async ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      await applyBackupData(data);
+      toast('Backup restaurado ✔');
+    }catch(err){ toast('Arquivo inválido'); }
+  };
+  r.readAsText(file);
+}
+
+/* ============ Init ============ */
+(async function(){
+  await openDB();
+  renderSessions(); renderWeek(); renderChecks();
+  // reconectar pasta lembrada e importar o arquivo se existir
+  try{
+    const h=await getMeta('dirHandle');
+    if(h){
+      dirHandle=h;
+      // verifica permissão já concedida (sem pedir) para auto-importar
+      let perm = await h.queryPermission({mode:'readwrite'});
+      if(perm==='granted'){
+        updateFolderBtn('connected');
+        const existing = await readFolderFile();
+        if(existing!==null){ await applyBackupData(existing); toast('Dados carregados da pasta ✔'); }
+      } else {
+        // pasta lembrada, mas precisa de um clique para reconectar (regra do navegador)
+        updateFolderBtn('pending');
+        toast('Clique em "Reconectar pasta" para retomar o salvamento');
+      }
+    } else {
+      updateFolderBtn('none');
+    }
+  }catch(e){ updateFolderBtn('none'); }
+})();
+</script>
+</body>
+</html>
