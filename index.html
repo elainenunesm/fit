@@ -756,20 +756,12 @@ const FILE_NAME = 'evolucao-dados.json';
 
 async function buildBackup(){ const photos = await allPhotos(); return JSON.stringify({state,photos}); }
 
-// converte dataURL (base64) em Blob para gravar como arquivo de imagem real
-function dataURLtoBlob(dataURL){
-  const parts = dataURL.split(','); const mime = (parts[0].match(/:(.*?);/)||[])[1] || 'image/jpeg';
-  const bin = atob(parts[1]); const len = bin.length; const arr = new Uint8Array(len);
-  for(let i=0;i<len;i++) arr[i] = bin.charCodeAt(i);
-  return new Blob([arr], {type:mime});
-}
-
 // salvamento automático (debounced) na pasta conectada
 let autoSaveTimer=null, autoSaving=false;
 function scheduleAutoSave(){
-  if(!dirHandle || suspendAutoSave) return;
+  if(!dirHandle || suspendAutoSave || autoSaving) return;
   clearTimeout(autoSaveTimer);
-  autoSaveTimer = setTimeout(()=>{ if(!autoSaving) saveToFolder(true); }, 1500);
+  autoSaveTimer = setTimeout(()=>{ saveToFolder(true); }, 2000);
 }
 
 // states: 'none' (sem pasta), 'pending' (pasta lembrada mas precisa reconectar), 'connected' (ativa)
@@ -846,25 +838,18 @@ async function applyBackupData(data){
 async function saveToFolder(silent){
   if(autoSaving) return;
   autoSaving = true;
-  try{
-    if(dirHandle && window.showDirectoryPicker){
-      try{
-        const perm = await dirHandle.requestPermission({mode:'readwrite'});
-        if(perm!=='granted'){ if(!silent) toast('Permissão negada na pasta'); return; }
-        // 1) grava o JSON com todos os dados (garante a importação)
-        const data = await buildBackup();
-        const fh = await dirHandle.getFileHandle(FILE_NAME,{create:true});
-        const w = await fh.createWritable();
-        await w.write(data); await w.close();
-        // 2) grava as fotos como arquivos .jpg reais dentro de uma subpasta "fotos"
-        await savePhotoFiles();
-        updateFolderBtn('connected');
-        if(!silent) toast('Salvo na pasta '+dirHandle.name+' ✔');
-        return;
-      }catch(e){ if(!silent) toast('Erro ao salvar na pasta'); return; }
-    }
-    // sem pasta conectada -> fallback de download (somente quando clicado)
-    if(silent) return;
+  if(dirHandle && window.showDirectoryPicker){
+    try{
+      const perm = await dirHandle.requestPermission({mode:'readwrite'});
+      if(perm!=='granted'){ if(!silent) toast('Permissão negada na pasta'); autoSaving=false; return; }
+      const data = await buildBackup();
+      const fh = await dirHandle.getFileHandle(FILE_NAME,{create:true});
+      const w = await fh.createWritable();
+      await w.write(data); await w.close();
+      updateFolderBtn('connected');
+      if(!silent) toast('Salvo na pasta '+dirHandle.name+' ✔');
+    }catch(e){ if(!silent) toast('Erro ao salvar na pasta'); }
+  } else if(!silent){
     const data = await buildBackup();
     if(window.showSaveFilePicker){
       try{
@@ -877,28 +862,12 @@ async function saveToFolder(silent){
     const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
     a.download='evolucao-backup-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
     toast('Backup baixado 💾');
-  } finally { autoSaving = false; }
+  }
+  autoSaving = false;
 }
 
 // grava cada foto como arquivo .jpg dentro da subpasta "fotos"
-async function savePhotoFiles(){
-  if(!dirHandle) return;
-  try{
-    const photos = await allPhotos();
-    const fotosDir = await dirHandle.getDirectoryHandle('fotos', {create:true});
-    for(const key in photos){
-      try{
-        const s = state.sessions.find(x=> key.startsWith(x.id+'_'));
-        const angle = key.split('_').slice(1).join('_');
-        const nice = s ? (s.title+'_'+s.date+'_'+angle) : key;
-        const fileName = nice.replace(/[^a-zA-Z0-9-_]/g,'_') + '.jpg';
-        const blob = dataURLtoBlob(photos[key]);
-        const fh = await fotosDir.getFileHandle(fileName, {create:true});
-        const w = await fh.createWritable(); await w.write(blob); await w.close();
-      }catch(e){}
-    }
-  }catch(e){}
-}
+
 function exportData(){ saveToFolder(); }
 function importData(e){
   const file=e.target.files[0]; if(!file) return;
