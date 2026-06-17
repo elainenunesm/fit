@@ -115,30 +115,23 @@
       <!-- Checklist rápido do dia -->
       <div class="glass rounded-2xl p-5 mb-5">
         <div class="flex items-center justify-between mb-3">
-          <h3 class="text-xl font-bold">✅ Checklist do Dia</h3>
-          <button onclick="goToChecklist()" class="text-xs px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/5">Ver todos os dias</button>
+          <h3 class="text-xl font-bold">✅ Checklist de Hoje</h3>
+          <button onclick="goToChecklist()" class="text-xs px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/5">Gerenciar dias</button>
         </div>
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-2">
-            <input id="dashCheckDate" type="date" onchange="loadDashChecklist(this.value)" class="bg-[#0f1626] border border-white/10 rounded-lg px-3 py-1.5 text-sm">
-            <span id="dashCheckWeekday" class="text-xs text-slate-400"></span>
-          </div>
-          <button onclick="addDashCheckItem()" class="text-xs px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/5">+ Tarefa</button>
-        </div>
-        <div class="mb-3">
+        
+        <div class="mb-5">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-sm text-slate-300">Progresso</span>
+            <span class="text-sm text-slate-300">Progresso do dia</span>
             <span id="dashCheckPct" class="text-sm font-bold text-cyan-300">0%</span>
           </div>
           <div class="h-3 rounded-full bg-white/5 overflow-hidden">
             <div id="dashCheckBar" class="h-full transition-all" style="width:0%; background:linear-gradient(90deg,#22d3ee,#a855f7);"></div>
           </div>
         </div>
+
         <div id="dashCheckList" class="space-y-2"></div>
-        <div class="flex gap-2 mt-4">
-          <button onclick="dupDashDay()" class="text-xs px-3 py-2 rounded-lg border border-white/10 hover:bg-white/5">📋 Duplicar para outro dia</button>
-          <button onclick="resetDashChecks()" class="text-xs px-3 py-2 rounded-lg border border-rose-500/30 text-rose-300 hover:bg-rose-500/10">↺ Reiniciar este dia</button>
-        </div>
+        
+        <p class="text-[10px] text-slate-500 mt-4 text-center italic">Para alterar tarefas ou datas, use a aba "Checklist".</p>
       </div>
 
       <!-- Acesso rápido -->
@@ -1018,43 +1011,31 @@ function getLocalDateStr(date) {
 
 function renderDashboard(){
   const today = new Date();
-  const dateStr = getLocalDateStr(today);
+  const todayStr = getLocalDateStr(today);
   const names = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
   
-  document.getElementById('dashDate').textContent = formatDate(dateStr);
+  document.getElementById('dashDate').textContent = formatDate(todayStr);
   document.getElementById('dashWeekday').textContent = names[today.getDay()];
   
-  // Mapeamento correto para o array DAYS (Segunda=0...Domingo=6)
-  // JS getDay: Dom=0, Seg=1... Sáb=6.
-  // Queremos: Seg=0, Ter=1, Qua=2, Qui=3, Sex=4, Sáb=5, Dom=6
   const dayIdx = (today.getDay() + 6) % 7;
   const dayName = DAYS[dayIdx];
-  
   const week = getCurrentWeek();
   const dayData = week.days[dayName] || defaultDay();
   
-  const mealsDiv = document.getElementById('dashMeals');
-  mealsDiv.innerHTML = dayData.meals.filter(m=>m.items.some(i=>i.text)).map(m=>
-    `<div class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5">•</span><div>${m.label}: ${m.items.filter(i=>i.text).map(i=>i.text).join(', ')||'—'}</div></div>`
+  document.getElementById('dashMeals').innerHTML = dayData.meals.filter(m=>m.items.some(i=>i.text)).map(m=>
+    `<div class="flex items-start gap-2 text-xs mb-1.5"><span class="text-cyan-400">•</span><div><b class="text-slate-200">${m.label}:</b> ${m.items.filter(i=>i.text).map(i=>i.text).join(', ')}</div></div>`
   ).join('') || '<span class="text-slate-500">Nenhuma refeição cadastrada</span>';
   
-  const workoutsDiv = document.getElementById('dashWorkouts');
-  workoutsDiv.innerHTML = dayData.workouts.filter(w=>w.text).map(w=>
-    `<div class="flex items-start gap-2"><span class="text-purple-400 mt-0.5">•</span><div>${w.text}</div></div>`
+  document.getElementById('dashWorkouts').innerHTML = dayData.workouts.filter(w=>w.text).map(w=>
+    `<div class="flex items-start gap-2 text-xs mb-1.5"><span class="text-purple-400">•</span><div>${w.text}</div></div>`
   ).join('') || '<span class="text-slate-500">Nenhum treino cadastrado</span>';
   
-  // checklist do dia
-  document.getElementById('dashCheckDate').value = state.checkDate;
-  const dashChecks = getChecksForDate(state.checkDate);
-  const dashWd = document.getElementById('dashCheckWeekday');
-  if(dashWd){ const n=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado']; const dt=new Date(state.checkDate+'T00:00'); dashWd.textContent=n[dt.getDay()]; }
-  
-  const dashList = document.getElementById('dashCheckList');
-  dashList.innerHTML = dashChecks.map((c,i)=>`
+  const dashChecks = getChecksForDate(todayStr);
+  document.getElementById('dashCheckList').innerHTML = dashChecks.map((c,i)=>`
     <div class="glass rounded-xl p-3 flex items-center gap-3">
-      <button onclick="toggleDashCheck(${i})" class="w-5 h-5 rounded border flex items-center justify-center text-[10px] ${c.d?'border-transparent text-white':'border-slate-600 text-slate-500'}" style="${c.d?'background:linear-gradient(135deg,#22d3ee,#a855f7);':''}">${c.d?'✓':''}</button>
+      <button onclick="toggleDashCheck('${todayStr}', ${i})" class="w-5 h-5 rounded border flex items-center justify-center text-[10px] ${c.d?'border-transparent text-white':'border-slate-600 text-slate-500'}" style="${c.d?'background:linear-gradient(135deg,#22d3ee,#a855f7);':''}">${c.d?'✓':''}</button>
       <span class="flex-1 text-sm ${c.d?'check-done':''}">${c.t}</span>
-    </div>`).join('');
+    </div>`).join('') || '<p class="text-sm text-slate-500 text-center py-4">Nenhum checklist para hoje.<br><button onclick="goToChecklist()" class="text-cyan-400 mt-2">Criar dia no Checklist</button></p>';
   
   const total=dashChecks.length, done=dashChecks.filter(c=>c.d).length;
   const pct=total?Math.round(done/total*100):0;
@@ -1062,48 +1043,12 @@ function renderDashboard(){
   document.getElementById('dashCheckBar').style.width=pct+'%';
 }
 
-function loadDashChecklist(date){
-  state.checkDate = date;
-  save();
-  renderDashboard();
-  renderChecks();
-}
-
-function toggleDashCheck(i){
-  const checks = getChecksForDate(state.checkDate);
+function toggleDashCheck(date, i){
+  const checks = getChecksForDate(date);
   checks[i].d = !checks[i].d;
   save();
   renderDashboard();
   renderChecks();
-}
-
-function addDashCheckItem(){
-  const checks = getChecksForDate(state.checkDate);
-  checks.push({t:'Nova tarefa',d:false});
-  save();
-  renderDashboard();
-  renderChecks();
-}
-
-function resetDashChecks(){
-  const checks = getChecksForDate(state.checkDate);
-  checks.forEach(c=>c.d=false);
-  save();
-  renderDashboard();
-  renderChecks();
-  toast('Checklist reiniciado');
-}
-
-function dupDashDay(){
-  const src=state.checkDate;
-  const dst=prompt('Duplicar checklist para qual data? (YYYY-MM-DD)', src);
-  if(!dst) return;
-  state.checkByDate[dst]=JSON.parse(JSON.stringify(getChecksForDate(src)));
-  state.checkDate=dst;
-  save();
-  renderDashboard();
-  renderChecks();
-  toast('Checklist duplicado para '+formatDate(dst));
 }
 
 function goToChecklist(){
