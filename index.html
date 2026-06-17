@@ -76,14 +76,90 @@
       </div>
     </div>
     <nav class="max-w-6xl mx-auto px-4 pb-3 flex gap-2 overflow-x-auto">
-      <button data-tab="fotos" class="tab-btn nav-active whitespace-nowrap text-sm px-4 py-2 rounded-lg border border-white/10 transition">📸 Fotos & Evolução</button>
-      <button data-tab="comparar" class="tab-btn whitespace-nowrap text-sm px-4 py-2 rounded-lg border border-white/10 transition">⚖️ Comparar</button>
-      <button data-tab="plano" class="tab-btn whitespace-nowrap text-sm px-4 py-2 rounded-lg border border-white/10 transition">🍽️ Semana</button>
+      <button data-tab="dashboard" class="tab-btn nav-active whitespace-nowrap text-sm px-4 py-2 rounded-lg border border-white/10 transition">🏠 Dashboard</button>
       <button data-tab="checklist" class="tab-btn whitespace-nowrap text-sm px-4 py-2 rounded-lg border border-white/10 transition">✅ Checklist</button>
+      <button data-tab="plano" class="tab-btn whitespace-nowrap text-sm px-4 py-2 rounded-lg border border-white/10 transition">🍽️ Semana</button>
+      <button data-tab="fotos" class="tab-btn whitespace-nowrap text-sm px-4 py-2 rounded-lg border border-white/10 transition">📸 Fotos & Evolução</button>
+      <button data-tab="comparar" class="tab-btn whitespace-nowrap text-sm px-4 py-2 rounded-lg border border-white/10 transition">⚖️ Comparar</button>
     </nav>
   </header>
 
   <main class="max-w-6xl mx-auto px-4 py-6">
+
+    <!-- ============ DASHBOARD ============ -->
+    <section id="tab-dashboard" class="tab-content fade-in">
+      <!-- Resumo do dia -->
+      <div class="glass rounded-2xl p-5 mb-5">
+        <div class="flex items-center justify-between mb-3 flex-wrap gap-3">
+          <div>
+            <h2 class="text-2xl font-bold">👋 Olá! Vamos ao foco de hoje?</h2>
+            <p class="text-slate-400 text-sm mt-1">Siga seu plano e marque o checklist antes de tirar as fotos.</p>
+          </div>
+          <div class="text-right">
+            <div id="dashDate" class="text-3xl font-bold text-cyan-300"></div>
+            <div id="dashWeekday" class="text-sm text-slate-400"></div>
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="bg-[#0f1626] rounded-xl p-4 border border-white/10">
+            <div class="flex items-center gap-2 mb-2"><span class="text-xl">🍽️</span><span class="font-bold text-sm text-slate-300">Alimentação de hoje</span></div>
+            <div id="dashMeals" class="text-sm text-slate-400 space-y-1"></div>
+          </div>
+          <div class="bg-[#0f1626] rounded-xl p-4 border border-white/10">
+            <div class="flex items-center gap-2 mb-2"><span class="text-xl">🏋️</span><span class="font-bold text-sm text-slate-300">Treino de hoje</span></div>
+            <div id="dashWorkouts" class="text-sm text-slate-400 space-y-1"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checklist rápido do dia -->
+      <div class="glass rounded-2xl p-5 mb-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xl font-bold">✅ Checklist do Dia</h3>
+          <button onclick="goToChecklist()" class="text-xs px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/5">Ver todos os dias</button>
+        </div>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <input id="dashCheckDate" type="date" onchange="loadDashChecklist(this.value)" class="bg-[#0f1626] border border-white/10 rounded-lg px-3 py-1.5 text-sm">
+            <span id="dashCheckWeekday" class="text-xs text-slate-400"></span>
+          </div>
+          <button onclick="addDashCheckItem()" class="text-xs px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/5">+ Tarefa</button>
+        </div>
+        <div class="mb-3">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm text-slate-300">Progresso</span>
+            <span id="dashCheckPct" class="text-sm font-bold text-cyan-300">0%</span>
+          </div>
+          <div class="h-3 rounded-full bg-white/5 overflow-hidden">
+            <div id="dashCheckBar" class="h-full transition-all" style="width:0%; background:linear-gradient(90deg,#22d3ee,#a855f7);"></div>
+          </div>
+        </div>
+        <div id="dashCheckList" class="space-y-2"></div>
+        <div class="flex gap-2 mt-4">
+          <button onclick="dupDashDay()" class="text-xs px-3 py-2 rounded-lg border border-white/10 hover:bg-white/5">📋 Duplicar para outro dia</button>
+          <button onclick="resetDashChecks()" class="text-xs px-3 py-2 rounded-lg border border-rose-500/30 text-rose-300 hover:bg-rose-500/10">↺ Reiniciar este dia</button>
+        </div>
+      </div>
+
+      <!-- Acesso rápido -->
+      <div class="grid sm:grid-cols-3 gap-3">
+        <button onclick="document.querySelector('[data-tab=fotos]').click()" class="glass rounded-2xl p-4 text-left hover:bg-white/5 transition">
+          <div class="text-3xl mb-2">📸</div>
+          <div class="font-bold">Fotos & Evolução</div>
+          <div class="text-xs text-slate-400 mt-1">Registre suas fotos e medidas</div>
+        </button>
+        <button onclick="document.querySelector('[data-tab=plano]').click()" class="glass rounded-2xl p-4 text-left hover:bg-white/5 transition">
+          <div class="text-3xl mb-2">📅</div>
+          <div class="font-bold">Semana Completa</div>
+          <div class="text-xs text-slate-400 mt-1">Veja e edite todos os dias</div>
+        </button>
+        <button onclick="openNewSession()" class="glass rounded-2xl p-4 text-left hover:bg-white/5 transition">
+          <div class="text-3xl mb-2">➕</div>
+          <div class="font-bold">Novo Registro</div>
+          <div class="text-xs text-slate-400 mt-1">Adicione fotos e medidas</div>
+        </button>
+      </div>
+    </section>
 
     <!-- ============ FOTOS ============ -->
     <section id="tab-fotos" class="tab-content fade-in">
@@ -154,17 +230,25 @@
         <h2 class="text-2xl font-bold">Checklist Diário</h2>
         <button onclick="addCheckItem()" class="text-sm px-3 py-2 rounded-lg border border-white/10 hover:bg-white/5">+ Tarefa</button>
       </div>
-      <p class="text-slate-400 text-sm mb-4">Marque conforme for cumprindo. Use "Reiniciar" para começar um novo dia.</p>
+      <p class="text-slate-400 text-sm mb-4">Gerencie seus checklists por data. Crie dias diferentes e duplique conforme sua rotina.</p>
+      
+      <!-- Lista de dias com checklist -->
+      <div class="glass rounded-2xl p-4 mb-5">
+        <h3 class="text-sm font-bold mb-3">📅 Dias cadastrados</h3>
+        <div id="checklistDates" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-4"></div>
+        <button onclick="createNewCheckDate()" class="text-xs px-3 py-2 rounded-lg border border-dashed border-white/15 text-slate-400 hover:bg-white/5 w-full">+ Criar novo dia</button>
+      </div>
+      
       <div class="glass rounded-2xl p-4 mb-4 flex items-center justify-between gap-3 flex-wrap">
         <div class="flex items-center gap-2">
-          <span class="text-sm text-slate-300">📅 Dia do checklist:</span>
+          <span class="text-sm text-slate-300">📅 Editando:</span>
           <input id="checkDate" type="date" onchange="updateCheckDate(this.value)" class="bg-[#0f1626] border border-white/10 rounded-lg px-3 py-1.5 text-sm">
         </div>
         <span id="checkWeekday" class="text-xs text-slate-400"></span>
       </div>
       <div class="glass rounded-2xl p-4 mb-4">
         <div class="flex items-center justify-between mb-2">
-          <span class="text-sm text-slate-300">Progresso de hoje</span>
+          <span class="text-sm text-slate-300">Progresso do dia</span>
           <span id="checkPct" class="text-sm font-bold text-cyan-300">0%</span>
         </div>
         <div class="h-3 rounded-full bg-white/5 overflow-hidden">
@@ -172,7 +256,10 @@
         </div>
       </div>
       <div id="checkList" class="space-y-2"></div>
-      <button onclick="resetChecks()" class="mt-5 text-sm px-4 py-2 rounded-lg border border-rose-500/30 text-rose-300 hover:bg-rose-500/10">↺ Reiniciar checklist</button>
+      <div class="flex gap-2 mt-5">
+        <button onclick="dupCheckDate()" class="text-sm px-4 py-2 rounded-lg border border-white/10 hover:bg-white/5">📋 Duplicar para outro dia</button>
+        <button onclick="resetChecks()" class="text-sm px-4 py-2 rounded-lg border border-rose-500/30 text-rose-300 hover:bg-rose-500/10">↺ Reiniciar este dia</button>
+      </div>
     </section>
   </main>
 
@@ -292,6 +379,7 @@ let state = JSON.parse(localStorage.getItem('evolucaoState')||'null') || {
     {t:'Refeições da dieta', d:false},
     {t:'Dormir 8h', d:false},
   ],
+  checkByDate: {}, // { '2026-03-12': [{t,d}, ...] }
 };
 const DAYS = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
 function defaultDay(){ return { date:'', meals:[{label:'Manhã',items:[]},{label:'Tarde',items:[]},{label:'Noite',items:[]}], workouts:[] }; }
@@ -315,7 +403,12 @@ function migrateWeeks(){
   if(!state.currentWeekId && state.weeks.length) state.currentWeekId=state.weeks[0].id;
 }
 migrateWeeks();
-if(!state.checkDate) state.checkDate = new Date().toISOString().slice(0,10);
+// migra checklist antigo para o novo formato por data
+if(!state.checkByDate) state.checkByDate={};
+if(!Object.keys(state.checkByDate).length && state.checks.length){
+  state.checkByDate[state.checkDate || getLocalDateStr()] = [...state.checks];
+}
+if(!state.checkDate) state.checkDate = getLocalDateStr();
 let suspendAutoSave = false;
 function save(){ localStorage.setItem('evolucaoState', JSON.stringify(state)); if(!suspendAutoSave && typeof scheduleAutoSave==='function') scheduleAutoSave(); }
 
@@ -344,6 +437,7 @@ document.querySelectorAll('.tab-btn').forEach(b=>{
     const el=document.getElementById('tab-'+b.dataset.tab);
     el.classList.remove('hidden'); el.classList.add('fade-in');
     if(b.dataset.tab==='comparar') buildCompareSelectors();
+    if(b.dataset.tab==='dashboard') renderDashboard();
   });
 });
 
@@ -356,7 +450,7 @@ function openNewSession(){
   tempPhotos = {};
   document.getElementById('modalTitle').textContent = 'Novo Registro';
   document.getElementById('mTitle').value = state.sessions.length===0 ? 'Dia 1' : 'Registro '+(state.sessions.length+1);
-  document.getElementById('mDate').value = new Date().toISOString().slice(0,10);
+  document.getElementById('mDate').value = getLocalDateStr();
   document.getElementById('mWeight').value='';
   // herda altura do último registro para facilitar
   const last = state.sessions[state.sessions.length-1];
@@ -460,7 +554,7 @@ function removeTempPhoto(k){ delete tempPhotos[k]; renderModalPhotos(); }
 
 async function saveSession(){
   const title = document.getElementById('mTitle').value.trim()||'Registro';
-  const date = document.getElementById('mDate').value || new Date().toISOString().slice(0,10);
+  const date = document.getElementById('mDate').value || getLocalDateStr();
   const weight = document.getElementById('mWeight').value;
   const height = document.getElementById('mHeight').value;
   const notes = document.getElementById('mNotes').value.trim();
@@ -723,32 +817,66 @@ function renameWeek(){ const w=getCurrentWeek(); const label=prompt('Renomear se
 function deleteWeek(){ if(state.weeks.length<=1){ toast('Mantenha ao menos 1 semana'); return; } if(!confirm('Apagar esta semana?')) return; const idx=state.weeks.findIndex(w=>w.id===state.currentWeekId); state.weeks.splice(idx,1); state.currentWeekId=state.weeks[Math.max(0,idx-1)].id; save(); renderWeek(); toast('Semana apagada'); }
 
 /* ============ CHECKLIST ============ */
+function getChecksForDate(date){ return state.checkByDate[date] || state.checks; }
 function renderChecks(){
   const list=document.getElementById('checkList');
   list.innerHTML='';
-  state.checks.forEach((c,i)=>{
+  const checks = getChecksForDate(state.checkDate);
+  checks.forEach((c,i)=>{
     const row=document.createElement('div');
     row.className='glass rounded-xl p-3 flex items-center gap-3';
     row.innerHTML=`
-      <button onclick="toggleCheck(${i})" class="w-6 h-6 rounded-md border-2 flex items-center justify-center transition ${c.d?'border-transparent':'border-slate-500'}" style="${c.d?'background:linear-gradient(135deg,#22d3ee,#a855f7);':''}">${c.d?'<span class="text-white text-sm">✓</span>':''}</button>
-      <input value="${c.t.replace(/"/g,'&quot;')}" oninput="editCheck(${i},this.value)" class="flex-1 bg-transparent text-sm outline-none ${c.d?'check-done':''}">
-      <button onclick="delCheck(${i})" class="text-slate-500 hover:text-rose-400 text-sm">✕</button>`;
+      <button onclick="toggleCheckDate('${state.checkDate}',${i})" class="w-6 h-6 rounded-md border-2 flex items-center justify-center transition ${c.d?'border-transparent':'border-slate-500'}" style="${c.d?'background:linear-gradient(135deg,#22d3ee,#a855f7);':''}">${c.d?'<span class="text-white text-sm">✓</span>':''}</button>
+      <input value="${c.t.replace(/"/g,'&quot;')}" oninput="editCheckDate('${state.checkDate}',${i},this.value)" class="flex-1 bg-transparent text-sm outline-none ${c.d?'check-done':''}">
+      <button onclick="delCheckDate('${state.checkDate}',${i})" class="text-slate-500 hover:text-rose-400 text-sm">✕</button>`;
     list.appendChild(row);
   });
-  const total=state.checks.length, done=state.checks.filter(c=>c.d).length;
+  const total=checks.length, done=checks.filter(c=>c.d).length;
   const pct=total?Math.round(done/total*100):0;
   document.getElementById('checkPct').textContent=pct+'%';
   document.getElementById('checkBar').style.width=pct+'%';
   const di=document.getElementById('checkDate'); if(di) di.value=state.checkDate;
   const wd=document.getElementById('checkWeekday');
   if(wd && state.checkDate){ const names=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado']; const dt=new Date(state.checkDate+'T00:00'); wd.textContent=names[dt.getDay()]+' · '+formatDate(state.checkDate); }
+  renderChecklistDates();
 }
-function updateCheckDate(v){ state.checkDate=v||new Date().toISOString().slice(0,10); save(); renderChecks(); }
-function toggleCheck(i){ state.checks[i].d=!state.checks[i].d; save(); renderChecks(); if(state.checks.every(c=>c.d)&&state.checks.length) toast('🎉 Tudo concluído hoje!'); }
-function editCheck(i,v){ state.checks[i].t=v; save(); }
-function delCheck(i){ state.checks.splice(i,1); save(); renderChecks(); }
-function addCheckItem(){ state.checks.push({t:'Nova tarefa',d:false}); save(); renderChecks(); }
-function resetChecks(){ state.checks.forEach(c=>c.d=false); state.checkDate=new Date().toISOString().slice(0,10); save(); renderChecks(); toast('Checklist reiniciado para hoje'); }
+function updateCheckDate(v){ state.checkDate=v||getLocalDateStr(); save(); renderChecks(); }
+function toggleCheckDate(date,i){ const checks=getChecksForDate(date); checks[i].d=!checks[i].d; save(); renderChecks(); if(checks.every(c=>c.d)&&checks.length) toast('🎉 '+formatDate(date)+' completo!'); }
+function editCheckDate(date,i,v){ const checks=getChecksForDate(date); checks[i].t=v; save(); }
+function delCheckDate(date,i){ const checks=getChecksForDate(date); checks.splice(i,1); save(); renderChecks(); }
+function addCheckItem(){ const checks=getChecksForDate(state.checkDate); checks.push({t:'Nova tarefa',d:false}); save(); renderChecks(); }
+function resetChecks(){ const checks=getChecksForDate(state.checkDate); checks.forEach(c=>c.d=false); save(); renderChecks(); toast('Checklist de '+formatDate(state.checkDate)+' reiniciado'); }
+function dupCheckDate(){ const src=state.checkDate; const dst=prompt('Duplicar checklist para qual data? (YYYY-MM-DD)', src); if(!dst) return; state.checkByDate[dst]=JSON.parse(JSON.stringify(getChecksForDate(src))); state.checkDate=dst; save(); renderChecks(); renderChecklistDates(); toast('Checklist duplicado para '+formatDate(dst)); }
+
+function renderChecklistDates(){
+  const div = document.getElementById('checklistDates');
+  if(!div) return;
+  const allDates = Object.keys(state.checkByDate);
+  if(!allDates.includes(state.checkDate)) allDates.push(state.checkDate);
+  allDates.sort().reverse();
+  div.innerHTML = allDates.map(d=>{
+    const checks = getChecksForDate(d);
+    const total=checks.length, done=checks.filter(c=>c.d).length;
+    const pct = total?Math.round(done/total*100):0;
+    const isToday = d===state.checkDate;
+    return `<button onclick="updateCheckDate('${d}')" class="glass rounded-xl p-3 text-left hover:bg-white/5 transition ${isToday?'border-cyan-500/50':''}">
+      <div class="flex items-center justify-between"><span class="font-bold text-sm">${formatDate(d)}</span><span class="text-[10px] text-slate-400">${pct}%</span></div>
+      <div class="text-xs text-slate-400 mt-1">${done}/${total} tarefas</div>
+      <div class="h-1.5 rounded-full bg-white/5 mt-2 overflow-hidden"><div style="width:${pct}%; background:linear-gradient(90deg,#22d3ee,#a855f7);" class="h-full"></div></div>
+    </button>`;
+  }).join('') || '<span class="text-slate-500 text-sm">Nenhum dia cadastrado ainda</span>';
+}
+
+function createNewCheckDate(){
+  const d = prompt('Criar checklist para qual data? (YYYY-MM-DD)', getLocalDateStr());
+  if(!d) return;
+  if(!state.checkByDate[d]) state.checkByDate[d] = [{t:'Beber água',d:false},{t:'Treino',d:false},{t:'Dieta',d:false}];
+  state.checkDate = d;
+  save();
+  renderChecks();
+  renderChecklistDates();
+  toast('Dia '+formatDate(d)+' criado');
+}
 
 /* ============ BACKUP (pasta/arquivo) ============ */
 let dirHandle = null;
@@ -882,23 +1010,121 @@ function importData(e){
   r.readAsText(file);
 }
 
+/* ============ DASHBOARD ============ */
+function getLocalDateStr(date) {
+  const d = date || new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function renderDashboard(){
+  const today = new Date();
+  const dateStr = getLocalDateStr(today);
+  const names = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+  
+  document.getElementById('dashDate').textContent = formatDate(dateStr);
+  document.getElementById('dashWeekday').textContent = names[today.getDay()];
+  
+  // Mapeamento correto para o array DAYS (Segunda=0...Domingo=6)
+  // JS getDay: Dom=0, Seg=1... Sáb=6.
+  // Queremos: Seg=0, Ter=1, Qua=2, Qui=3, Sex=4, Sáb=5, Dom=6
+  const dayIdx = (today.getDay() + 6) % 7;
+  const dayName = DAYS[dayIdx];
+  
+  const week = getCurrentWeek();
+  const dayData = week.days[dayName] || defaultDay();
+  
+  const mealsDiv = document.getElementById('dashMeals');
+  mealsDiv.innerHTML = dayData.meals.filter(m=>m.items.some(i=>i.text)).map(m=>
+    `<div class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5">•</span><div>${m.label}: ${m.items.filter(i=>i.text).map(i=>i.text).join(', ')||'—'}</div></div>`
+  ).join('') || '<span class="text-slate-500">Nenhuma refeição cadastrada</span>';
+  
+  const workoutsDiv = document.getElementById('dashWorkouts');
+  workoutsDiv.innerHTML = dayData.workouts.filter(w=>w.text).map(w=>
+    `<div class="flex items-start gap-2"><span class="text-purple-400 mt-0.5">•</span><div>${w.text}</div></div>`
+  ).join('') || '<span class="text-slate-500">Nenhum treino cadastrado</span>';
+  
+  // checklist do dia
+  document.getElementById('dashCheckDate').value = state.checkDate;
+  const dashChecks = getChecksForDate(state.checkDate);
+  const dashWd = document.getElementById('dashCheckWeekday');
+  if(dashWd){ const n=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado']; const dt=new Date(state.checkDate+'T00:00'); dashWd.textContent=n[dt.getDay()]; }
+  
+  const dashList = document.getElementById('dashCheckList');
+  dashList.innerHTML = dashChecks.map((c,i)=>`
+    <div class="glass rounded-xl p-3 flex items-center gap-3">
+      <button onclick="toggleDashCheck(${i})" class="w-5 h-5 rounded border flex items-center justify-center text-[10px] ${c.d?'border-transparent text-white':'border-slate-600 text-slate-500'}" style="${c.d?'background:linear-gradient(135deg,#22d3ee,#a855f7);':''}">${c.d?'✓':''}</button>
+      <span class="flex-1 text-sm ${c.d?'check-done':''}">${c.t}</span>
+    </div>`).join('');
+  
+  const total=dashChecks.length, done=dashChecks.filter(c=>c.d).length;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('dashCheckPct').textContent=pct+'%';
+  document.getElementById('dashCheckBar').style.width=pct+'%';
+}
+
+function loadDashChecklist(date){
+  state.checkDate = date;
+  save();
+  renderDashboard();
+  renderChecks();
+}
+
+function toggleDashCheck(i){
+  const checks = getChecksForDate(state.checkDate);
+  checks[i].d = !checks[i].d;
+  save();
+  renderDashboard();
+  renderChecks();
+}
+
+function addDashCheckItem(){
+  const checks = getChecksForDate(state.checkDate);
+  checks.push({t:'Nova tarefa',d:false});
+  save();
+  renderDashboard();
+  renderChecks();
+}
+
+function resetDashChecks(){
+  const checks = getChecksForDate(state.checkDate);
+  checks.forEach(c=>c.d=false);
+  save();
+  renderDashboard();
+  renderChecks();
+  toast('Checklist reiniciado');
+}
+
+function dupDashDay(){
+  const src=state.checkDate;
+  const dst=prompt('Duplicar checklist para qual data? (YYYY-MM-DD)', src);
+  if(!dst) return;
+  state.checkByDate[dst]=JSON.parse(JSON.stringify(getChecksForDate(src)));
+  state.checkDate=dst;
+  save();
+  renderDashboard();
+  renderChecks();
+  toast('Checklist duplicado para '+formatDate(dst));
+}
+
+function goToChecklist(){
+  document.querySelector('[data-tab=checklist]').click();
+}
+
 /* ============ Init ============ */
 (async function(){
   await openDB();
-  renderSessions(); renderWeek(); renderChecks();
+  renderDashboard(); renderSessions(); renderWeek(); renderChecks(); renderChecklistDates();
   // reconectar pasta lembrada e importar o arquivo se existir
   try{
     const h=await getMeta('dirHandle');
     if(h){
       dirHandle=h;
-      // verifica permissão já concedida (sem pedir) para auto-importar
       let perm = await h.queryPermission({mode:'readwrite'});
       if(perm==='granted'){
         updateFolderBtn('connected');
         const existing = await readFolderFile();
         if(existing!==null){ await applyBackupData(existing); toast('Dados carregados da pasta ✔'); }
       } else {
-        // pasta lembrada, mas precisa de um clique para reconectar (regra do navegador)
         updateFolderBtn('pending');
         toast('Clique em "Reconectar pasta" para retomar o salvamento');
       }
